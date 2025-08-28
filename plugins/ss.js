@@ -86,13 +86,13 @@ cmd({
         },
         caption: "🖼️ *Screenshot Generated*\n\n" +
                 "🔗 *Website:* " + url + "\n\n" +
-                "⚡ *Powered by Terri*",
+                "⚡ *by ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ*",
         ...newsletterConfig
     }, { quoted: mek });
 
     // Send newsletter update message (without image)
     await conn.sendMessage(from, { 
-        text: "🌟 *VERONICA UPDATE* 🌟\n\nStay updated with our latest features!",
+        text: "🌟 *ᴊꜰx ᴍᴅ-xᴠ3* 🌟\n\nStay updated with our latest features!",
         ...newsletterConfig
     }, { quoted: mek });
 

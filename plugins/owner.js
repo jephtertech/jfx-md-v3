@@ -2,62 +2,81 @@ const { cmd } = require('../command');
 const config = require('../config');
 
 cmd({
-    'pattern': 'owner',
-    'react': '🦋',
-    'desc': 'Get owner number',
-    'category': 'main',
-    'filename': __filename
-}, async (m, sock, msg, { from }) => {
+    pattern: 'owner',
+    react: '🦋',
+    desc: 'Get owner number',
+    category: 'main',
+    filename: __filename
+}, async (conn, mek, m, { from }) => {
     try {
         const ownerNumber = config.OWNER_NUMBER;
         const ownerName = config.OWNER_NAME;
         
-        // Create vcard
+        // Create vCard
         const vcard = `BEGIN:VCARD
 VERSION:3.0
 FN:${ownerName}
 TEL;type=CELL;type=VOICE;waid=${ownerNumber.replace('+', '')}:${ownerNumber}
 END:VCARD`;
-        
+
+        // Fake verified contact
+        const verifiedContact = {
+            key: {
+                fromMe: false,
+                participant: `0@s.whatsapp.net`,
+                remoteJid: "status@broadcast"
+            },
+            message: {
+                contactMessage: {
+                    displayName: "ᴊꜰx ᴍᴅ-xᴠ3",
+                    vcard: `BEGIN:VCARD\nVERSION:3.0\nFN:${ownerName}\nORG:ᴊꜰx ᴍᴅ-xᴠ3;\nTEL;type=CELL;type=VOICE;waid=${ownerNumber.replace('+', '')}:${ownerNumber}\nEND:VCARD`
+                }
+            }
+        };
+
         // Send contact
-        await sock.sendMessage(from, {
+        await conn.sendMessage(from, {
             contacts: {
                 displayName: ownerName,
                 contacts: [{ vcard }]
             }
-        });
-        
+        }, { quoted: verifiedContact });
+
         // Send image with caption
-        await sock.sendMessage(from, {
+        await conn.sendMessage(from, {
             image: { url: 'https://files.catbox.moe/pvhmgv.jpg' },
             caption: `╭━━〔 *ᴊꜰx ᴍᴅ-xᴠ3* 〕━━┈⊷
 ┃❍╭─────────────·๏
 ┃❍┃• *Here is the owner details*
 ┃❍┃• *ɴᴀᴍᴇ* - ${ownerName}
 ┃❍┃• *ɴᴜᴍʙᴇʀ* ${ownerNumber}
-┃❍┃• *𝖵ᴇʀsɪᴏɴ*: 1.0.0
+┃❍┃• *𝖵ᴇʀsɪᴏɴ*: 3.0.0
 ┃❍└───────────┈⊷
 ╰──────────────┈⊷
-> ©Tᴇʀʀɪ`,
+> © ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ`,
             contextInfo: {
                 mentionedJid: [ownerNumber.replace('+', '') + '@s.whatsapp.net'],
                 forwardingScore: 999,
-                isForwarded: true
+                isForwarded: true,
+                forwardedNewsletterMessageInfo: {
+                    newsletterJid: '120363420646690174@newsletter',
+                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
+                    serverMessageId: 143
+                }
             }
-        }, { quoted: msg });
-        
+        }, { quoted: verifiedContact });
+
         // Send audio
-        await sock.sendMessage(from, {
+        await conn.sendMessage(from, {
             audio: { url: 'https://files.catbox.moe/eqfc2j.mp3' },
             mimetype: 'audio/mp4',
             ptt: true
-        }, { quoted: msg });
-        
+        }, { quoted: verifiedContact });
+
     } catch (error) {
         console.error(error);
-        // Make sure 'reply' function is available or use sock.sendMessage instead
-        await sock.sendMessage(from, { 
-            text: `An error occurred: ${error.message}` 
-        }, { quoted: msg });
+        await conn.sendMessage(from, { 
+            text: `❌ An error occurred: ${error.message}` 
+        }, { quoted: m });
     }
 });

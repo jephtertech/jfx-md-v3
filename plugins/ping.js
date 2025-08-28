@@ -9,14 +9,15 @@ cmd({
   category: "main",
   react: "⚡",
   filename: __filename
-}, async (conn, mek, m, { from, reply }) => {
+}, async (conn, mek, m, { from }) => {
   try {
     const start = Date.now();
-    
-    // Send a message and capture the response timestamp
-    await reply(" ping...");
-    const end = Date.now();
-    const latencyMs = end - start;
+
+    // Send a temporary ping message
+    const sentMsg = await conn.sendMessage(from, { text: "🏓 Pinging..." }, { quoted: m });
+
+    // Calculate latency
+    const latencyMs = Date.now() - start;
 
     let reactionEmoji = '⚡';
     if (latencyMs > 1000) {
@@ -25,9 +26,13 @@ cmd({
       reactionEmoji = '🔄';
     }
 
-    await reply(`> *ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ: ${latencyMs}ms ${reactionEmoji}*`);
+    // Send final latency result
+    await conn.sendMessage(from, { 
+      text: `> *ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ: ${latencyMs}ms ${reactionEmoji}*`
+    }, { quoted: sentMsg });
+
   } catch (e) {
     console.error("Error in ping command:", e);
-    reply(`An error occurred: ${e.message}`);
+    await conn.sendMessage(from, { text: `❌ An error occurred: ${e.message}` }, { quoted: m });
   }
 });

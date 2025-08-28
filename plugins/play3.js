@@ -135,7 +135,7 @@ cmd({
 
         let ytmsg = `🎵 *Song Details*
 🎶 *Title:* ${data.result.title || yts.title}
-👤 *Creator:* TERRIZEV
+👤 *Creator:* > ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ
 
 _Downloading MP3..._`;
 
@@ -144,8 +144,8 @@ _Downloading MP3..._`;
             forwardingScore: 999,
             isForwarded: true,
             forwardedNewsletterMessageInfo: {
-                newsletterJid: '120363397100406773@newsletter',
-                newsletterName: 'VERONICA-BOT',
+                newsletterJid: '120363420646690174@newsletter',
+                newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
                 serverMessageId: 143
             }
         };

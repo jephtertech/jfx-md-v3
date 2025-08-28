@@ -6,13 +6,8 @@ cmd({
     react: "📍",
     category: "group",
     filename: __filename,
-}, async (conn, mek, m, { from, isGroup, sender, isOwner, reply }) => {
+}, async (conn, mek, m, { from, isGroup, sender, reply }) => {
     try {
-        // Permission check
-        if (!isGroup && !isOwner) {
-            return reply("⚠️ Only the bot owner or group admins can use this command.");
-        }
-
         // Newsletter message configuration
         const newsletterConfig = {
             mentionedJid: [m.sender],

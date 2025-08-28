@@ -1,80 +1,74 @@
-const { cmd, commands } = require('../command');
-const os = require("os");
-const { runtime } = require('../lib/functions');
+const { cmd } = require('../command');
+const config = require('../config');   // bot config (owner number, prefix, etc.)
+const os = require("os");              // Node.js system module (gives RAM, CPU, OS info)
 
 cmd({
-    pattern: "alive",
-    alias: ["av", "runtime", "uptime"],
-    desc: "Check uptime and system status",
-    category: "main",
-    react: "📟",
-    filename: __filename
-},
-async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
-    try {
-        // Get system info
-        const platform = "ʀᴇɴᴅᴇʀ ᴘʟᴀᴛꜰᴏʀᴍ"; // Fixed deployment platform
-        const release = os.release(); // OS version
-        const cpuModel = os.cpus()[0].model; // CPU info
-        const totalMem = (os.totalmem() / 1024 / 1024).toFixed(2); // Total RAM in MB
-        const usedMem = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2); // Used RAM in MB
+  pattern: "ping",
+  alias: ["speed", "pong"],
+  use: '.ping',
+  desc: "Check bot's response time & system status",
+  category: "main",
+  react: "⚡",
+  filename: __filename
+}, 
+async (conn, mek, m, { from, pushname, reply }) => {
+  try {
+    const start = Date.now();
+    await reply("🏓 Pinging...");
+    const latencyMs = Date.now() - start;
 
-        // Stylish and detailed system status message
-        const status = `🌟 *ɢᴏᴏᴅ ${
-  new Date().getHours() < 12 ? 'ᴍᴏʀɴɪɴɢ' : 
-  (new Date().getHours() < 18 ? 'ᴀꜰᴛᴇʀɴᴏᴏɴ' : 'ᴇᴠᴇɴɪɴɢ')
-}, ${pushname}!* 💫
+    let reactionEmoji = '⚡';
+    if (latencyMs > 1000) reactionEmoji = '🐢';
+    else if (latencyMs > 500) reactionEmoji = '🔄';
+
+    const platform = "ʀᴇɴᴅᴇʀ ᴘʟᴀᴛꜰᴏʀᴍ";
+    const release = os.release();
+    const totalMem = (os.totalmem() / 1024 / 1024).toFixed(0); 
+    const usedMem = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(0);
+    const nodeVer = process.version;
+
+    const status = `⚡ *ᴘɪɴɢ ʀᴇꜱᴜʟᴛ* ⚡
 ╭─❰ *ᴊꜰx ᴍᴅ-xᴠ3* ❱─
-┃ *𝖴ᴘᴛɪᴍᴇ* : *${runtime(process.uptime())}*
-┃ *𝖱ᴀᴍ ᴜsᴀɢᴇ* : *${usedMem}MB / ${totalMem}MB*
-┃ *𝖣ᴇᴘʟᴏʏᴇᴅ ᴏɴ* : *${platform}*
-┃ *𝖮ᴡɴᴇʀ* :*ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ*
-┃ *𝖵ᴇʀsɪᴏɴ* : *3.𝟢.𝟢*
+┃ *𝖫ᴀᴛᴇɴᴄʏ* : *${latencyMs}ms ${reactionEmoji}*
+┃ *𝖱ᴀᴍ* : *${usedMem}MB / ${totalMem}MB*
+┃ *𝖮ꜱ* : *${release}*
+┃ *𝖯ʟᴀᴛꜰᴏʀᴍ* : *${platform}*
+┃ *𝖫ᴀɴɢᴜᴀɢᴇ* : *Node.js ${nodeVer}*
+┃ *𝖧ᴏꜱᴛɪɴɢ* : *Render*
 ╰───────────┈⊷
 > ʙʏ ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ`;
-          
-        // Contact message for verified context
-        const verifiedContact = {
-            key: {
-                fromMe: false,
-                participant: `0@s.whatsapp.net`,
-                remoteJid: "status@broadcast"
-            },
-            message: {
-                contactMessage: {
-                    displayName: "ᴊꜰx ᴍᴅ-xᴠ3",
-                    vcard: "BEGIN:VCARD\nVERSION:3.0\nFN: ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ\nORG:ᴊꜰx ᴍᴅ-xᴠ3;\nTEL;type=CELL;type=VOICE;waid=93775551335:+2349046157539\nEND:VCARD"
-                }
-            }
-        };
-        
-        // Send image + caption + audio combined
-        await conn.sendMessage(from, { 
-            image: { url: `https://files.catbox.moe/7kl8va.jpg` },  
-            caption: status,
-            contextInfo: {
-                mentionedJid: [m.sender],
-                forwardingScore: 999,
-                isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363420646690174@newsletter',
-                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
-                    serverMessageId: 143
-                   }
-                }
-            },
-            { quoted: verifiedContact }
-        );
 
-        // Attach audio within the same "quoted" message for grouping
-        await conn.sendMessage(from, { 
-            audio: { url: 'https://files.catbox.moe/eqfc2j.mp3' },
-            mimetype: 'audio/mp4',
-            ptt: true 
-             }, { quoted: verifiedContact });
+    const verifiedContact = {
+      key: {
+        fromMe: false,
+        participant: `0@s.whatsapp.net`,
+        remoteJid: "status@broadcast"
+      },
+      message: {
+        contactMessage: {
+          displayName: "ᴊꜰx ᴍᴅ-xᴠ3",
+          vcard: "BEGIN:VCARD\nVERSION:3.0\nFN: ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ\nORG:ᴊꜰx ᴍᴅ-xᴠ3;\nTEL;type=CELL;type=VOICE;waid=2349046157539:+2349046157539\nEND:VCARD"
+        }
+      }
+    };
 
-    } catch (e) {
-        console.error("Error in alive command:", e);
-        reply(`🚨 *An error occurred:* ${e.message}`);
-    }
+    await conn.sendMessage(from, { 
+      image: { url: `https://files.catbox.moe/7kl8va.jpg` },  
+      caption: status,
+      contextInfo: {
+        mentionedJid: [m.sender],
+        forwardingScore: 999,
+        isForwarded: true,
+        forwardedNewsletterMessageInfo: {
+          newsletterJid: '120363420646690174@newsletter',
+          newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
+          serverMessageId: 143
+        }
+      }
+    }, { quoted: verifiedContact });
+
+  } catch (e) {
+    console.error("Error in ping command:", e);
+    reply(`❌ Error: ${e.message}`);
+  }
 });

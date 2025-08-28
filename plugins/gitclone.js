@@ -25,16 +25,16 @@ cmd({
   filename: __filename
 }, async (conn, m, match, { from, quoted, args, reply }) => {
   const link = args[0];
-  if (!link) return reply("Please provide a GitHub link.\n\nExample:\n.gitclone ᴊꜰx ᴍᴅ-xᴠ3.ɢɪᴛʜᴜʙ");
+  if (!link) return reply("Please provide a GitHub link.\n\nExample:\n.gitclone https://github.com/username/repo");
 
   if (!/^https:\/\/github\.com\/[^\/]+\/[^\/]+/.test(link)) {
     return reply("⚠️ Invalid GitHub URL.");
   }
 
   try {
-    const match = link.match(/github\.com\/([^\/]+)\/([^\/]+)(?:\.git)?/i);
-    if (!match) return reply("❌ Couldn't extract repo data.");
-    const user = match[1], repo = match[2];
+    const repoMatch = link.match(/github\.com\/([^\/]+)\/([^\/]+)(?:\.git)?/i);
+    if (!repoMatch) return reply("❌ Couldn't extract repo data.");
+    const user = repoMatch[1], repo = repoMatch[2];
 
     const downloadURL = `https://api.github.com/repos/${user}/${repo}/zipball`;
     const headCheck = await fetch(downloadURL, { method: "HEAD" });
@@ -55,7 +55,7 @@ cmd({
 
     await conn.sendMessage(from, {
       document: { url: downloadURL },
-      fileName: `${fileName}.zip`,
+      fileName: fileName,
       mimetype: 'application/zip',
       contextInfo: {
         mentionedJid: [m.sender],

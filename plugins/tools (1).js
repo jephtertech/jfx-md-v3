@@ -28,8 +28,8 @@ cmd({
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363397100406773@newsletter',
-                    newsletterName: 'VERONICA-BOT',
+                    newsletterJid: '120363420646690174@newsletter',
+                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
                     serverMessageId: 143
                 }
             }
@@ -67,8 +67,8 @@ cmd({
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363397100406773@newsletter',
-                    newsletterName: 'VERONICA-BOT',
+                    newsletterJid: '120363420646690174@newsletter',
+                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
                     serverMessageId: 143
                 }
             }
@@ -106,8 +106,8 @@ cmd({
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363397100406773@newsletter',
-                    newsletterName: 'VERONICA AI',
+                    newsletterJid: '120363420646690174@newsletter',
+                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
                     serverMessageId: 143
                 }
             }
@@ -145,8 +145,8 @@ cmd({
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363397100406773@newsletter',
-                    newsletterName: 'VERONICA AI',
+                    newsletterJid: '120363420646690174@newsletter',
+                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
                     serverMessageId: 143
                 }
             }
@@ -181,8 +181,8 @@ cmd({
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363397100406773@newsletter',
-                    newsletterName: 'VERONICA AI',
+                    newsletterJid: '120363420646690174@newsletter',
+                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
                     serverMessageId: 143
                 }
             }
@@ -216,8 +216,8 @@ cmd({
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363397100406773@newsletter',
-                    newsletterName: 'VERONICA AI',
+                    newsletterJid: '120363420646690174@newsletter',
+                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
                     serverMessageId: 143
                 }
             }
@@ -262,8 +262,8 @@ cmd({
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363397100406773@newsletter',
-                    newsletterName: 'VERONICA AI',
+                    newsletterJid: '120363420646690174@newsletter',
+                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
                     serverMessageId: 143
                 }
             }
@@ -306,8 +306,8 @@ cmd({
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363397100406773@newsletter',
-                    newsletterName: 'VERONICA AI',
+                    newsletterJid: '120363420646690174@newsletter',
+                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
                     serverMessageId: 143
                 }
             }
@@ -352,8 +352,8 @@ cmd({
                     forwardingScore: 999,
                     isForwarded: true,
                     forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363397100406773@newsletter',
-                        newsletterName: 'VERONICA AI',
+                        newsletterJid: '120363420646690174@newsletter',
+                        newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
                         serverMessageId: 143
                     }
                 }
@@ -391,8 +391,8 @@ cmd({
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363397100406773@newsletter',
-                    newsletterName: 'VERONICA AI',
+                    newsletterJid: '120363420646690174@newsletter',
+                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
                     serverMessageId: 143
                 }
             }
