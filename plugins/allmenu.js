@@ -1,5 +1,3 @@
-
-
 const fs = require('fs');
 const path = require('path');
 const { cmd } = require('../command');
@@ -39,14 +37,34 @@ cmd({
 ┃ ✦╭─────────────
 ┃ ✦│▸ Usᴇʀ       : ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ
 ┃ ✦│▸ ʙᴀɪʟᴇʏs    : 𝐌𝐮𝐥𝐭𝐢 𝐃𝐞𝐯𝐢𝐜𝐞
-┃ ✦│▸ ᴛᴏᴛᴀʟ ᴄᴏᴍᴍᴀɴᴅs:*${totalCommands}*
+┃ ✦│▸ ᴄᴏᴍᴍᴀɴᴅs   :*${totalCommands}*
 ┃ ✦│▸ ᴘʟᴀᴛғᴏʀᴍ   : ʀᴇɴᴅᴇʀ
 ┃ ✦│▸ 𝖵ᴇʀsɪᴏɴ    : 3.𝟎.𝟎
 ┃ ✦╰─────────────
 ╰━━━━━━━━━━━━┈⊷\n\n${commandList.join('\n\n')}`;
 
+    // Pick a random local image from src folder
+    const srcDir = path.join(__dirname, '../src');
+    const srcFiles = fs.readdirSync(srcDir).filter(file => file.match(/\.(jpg|jpeg|png|webp)$/i));
+    const randomImage = path.join(srcDir, srcFiles[Math.floor(Math.random() * srcFiles.length)]);
+
+    // ✅ Verified Contact (from about.js)
+    const verifiedContact = {
+      key: {
+        fromMe: false,
+        participant: `0@s.whatsapp.net`,
+        remoteJid: "status@broadcast"
+      },
+      message: {
+        contactMessage: {
+          displayName: "ᴊꜰx ᴍᴅ-xᴠ3",
+          vcard: "BEGIN:VCARD\nVERSION:3.0\nFN: ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ\nORG:ᴊꜰx ᴍᴅ-xᴠ3;\nTEL;type=CELL;type=VOICE;waid=93775551335:+2349046157539\nEND:VCARD"
+        }
+      }
+    };
+
     const messageOptions = {
-      image: { url: "https://files.catbox.moe/pvhmgv.jpg" },
+      image: fs.readFileSync(randomImage),
       caption: caption,
       contextInfo: {
         forwardingScore: 999,
@@ -61,13 +79,15 @@ cmd({
           title: "ᴊꜰx ᴍᴅ-xᴠ3",
           body: `ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ`,
           mediaType: 1,
-          thumbnailUrl: "https://files.catbox.moe/tejxaj.jpg",
-          sourceUrl: "https://github.com/Terrizev/VERONICA-AI"
+          thumbnail: fs.readFileSync(randomImage), // local thumbnail
+          sourceUrl: "https://github.com/Jeffreyfx1/jfx-md-x-v3"
         }
       }
     };
 
-    await Void.sendMessage(m.chat, messageOptions, { quoted: m });
+    // Send with verified contact as quote
+    await Void.sendMessage(m.chat, messageOptions, { quoted: verifiedContact });
+
   } catch (err) {
     console.error(err);
     await m.reply('❌ Error: Could not fetch the command list.');

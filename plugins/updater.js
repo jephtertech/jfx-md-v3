@@ -1,10 +1,20 @@
-
 const { cmd } = require("../command");
 const axios = require('axios');
 const fs = require('fs');
 const path = require("path");
 const AdmZip = require("adm-zip");
 const { setCommitHash, getCommitHash } = require('../data/updateDB');
+
+// 🔹 Helper: pick random image from src folder
+function getRandomImage() {
+    const imageDir = path.join(__dirname, "..", "src"); // adjust if your src is elsewhere
+    const files = fs.readdirSync(imageDir).filter(file =>
+        /\.(jpg|jpeg|png|gif)$/i.test(file)
+    );
+    if (files.length === 0) return null;
+    const randomFile = files[Math.floor(Math.random() * files.length)];
+    return path.join(imageDir, randomFile);
+}
 
 cmd({
     pattern: "update",
@@ -115,13 +125,11 @@ cmd({
             }, { quoted: mek });
         }
 
-        // Final success message with image (this will be a new message)
+        // ✅ Final success message with random local image
+        const randomImage = getRandomImage();
         await conn.sendMessage(from, {
-            image: { 
-                url: "https://files.catbox.moe/j5jjt6.jpg",
-                mimetype: "image/jpeg"
-            },
-            caption: "✅ *Update complete!*\n\n_Restarting the bot to apply changes..._\n\by ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ",
+            image: randomImage ? { url: randomImage } : undefined,
+            caption: "✅ *Update complete!*\n\n_Restarting the bot to apply changes..._\n\nby ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ",
             ...newsletterConfig
         }, { quoted: mek });
 
@@ -194,14 +202,14 @@ cmd({
 
         // Initial check message
         await conn.sendMessage(from, {
-            text: "🔍 *Checking for VERONICA-AI updates...*",
+            text: "🔍 *Checking for updates...*",
             ...newsletterConfig
         }, { quoted: mek });
 
         // Fetch the latest commit info from GitHub
         const { data: commitData } = await axios.get("https://api.github.com/repos/Jeffreyfx1/jfx-md-x-v3/commits/main", {
             headers: {
-                'User-Agent': 'ᴊꜰx ᴍᴅ-xᴠ3'
+                'User-Agent': 'ᴊꜰx ᴍᴅ-x-v3'
             }
         });
         
@@ -214,7 +222,7 @@ cmd({
 
         if (latestCommitHash === currentHash) {
             return await conn.sendMessage(from, {
-                text: `✅ *VERONICA is up-to-date!*\n\n*Current Version:* \`${currentHash.substring(0, 7)}\`\n*Last Commit:* ${latestCommitMessage}\n*Date:* ${commitDate}\n*Author:* ${author}`,
+                text: `✅ *ᴊꜰx ᴍᴅ-x-v3 is up-to-date!*\n\n*Current Version:* \`${currentHash.substring(0, 7)}\`\n*Last Commit:* ${latestCommitMessage}\n*Date:* ${commitDate}\n*Author:* ${author}`,
                 ...newsletterConfig
             }, { quoted: mek });
         }
@@ -224,7 +232,7 @@ cmd({
         try {
             const { data: compareData } = await axios.get(`https://api.github.com/repos/Jeffreyfx1/jfx-md-x-v3/compare/${currentHash}...${latestCommitHash}`, {
                 headers: {
-                    'User-Agent': 'ᴊꜰx ᴍᴅ-xᴠ3'
+                    'User-Agent': 'ᴊꜰx ᴍᴅ-x-v3'
                 }
             });
             

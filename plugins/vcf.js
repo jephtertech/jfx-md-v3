@@ -3,8 +3,6 @@ const config = require('../config')
 const { cmd, commands } = require('../command')
 const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson} = require('../lib/functions')
 
-
-
 //vcf//
 
 cmd({
@@ -16,13 +14,9 @@ cmd({
 }, async (conn, mek, m, { from, quoted, body, isCmd, command, args, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
     try {
         if (!isGroup) return reply("This command is for groups only.");
-        if (!isOwner) return reply("*_This command is for the owner only_*");
 
-        let card = quoted || m; // Handle if quoted message exists
-        let cmiggc = groupMetadata;
-        const { participants } = groupMetadata;
+        const cmiggc = groupMetadata;
         
-        let orgiggc = participants.map(a => a.id);
         let vcard = '';
         let noPort = 0;
         
@@ -47,5 +41,3 @@ cmd({
         reply(err.toString());
     }
 });
-
-

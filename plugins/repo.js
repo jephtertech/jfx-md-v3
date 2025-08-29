@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const fetch = require("node-fetch");
 const { cmd } = require("../command");
 
@@ -7,31 +9,43 @@ const readMore = more.repeat(4001);
 cmd({
     pattern: "script",
     alias: ["repo", "sc", "info"],
-    desc: "Fetch information about a GitHub repository.",
+    desc: "Fetch information about the GitHub repository.",
     react: "🎗️",
     category: "info",
     filename: __filename,
-}, async (_m, sock, msg, { from }) => {
+}, async (m, sock, msg, { from }) => {
+    m.reply = async (text, options = {}) => {
+        return m.sendMessage(from, { text, mentions: [msg.sender], ...options });
+    };
+
     const githubRepoURL = "https://github.com/Jeffreyfx1/jfx-md-x-v3";
     const pairsiteURL = "https://jfx-v3-session.onrender.com";
 
     try {
-        // Extract username and repo name from the URL
+        // 🎲 Spin through ./src for random image
+        const srcDir = path.join(__dirname, "../src");
+        const imageFiles = fs.readdirSync(srcDir).filter(f => /\.(jpe?g|png|webp)$/i.test(f));
+        if (imageFiles.length === 0) throw new Error("No images found in ./src");
+        const randomImage = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+        const selectedImage = fs.readFileSync(path.join(srcDir, randomImage));
+
+        // 🎶 Spin through ./audio for random audio
+        const audioDir = path.join(__dirname, "../audio");
+        const audioFiles = fs.readdirSync(audioDir).filter(f => /\.(mp3|mp4)$/i.test(f));
+        if (audioFiles.length === 0) throw new Error("No audio found in ./audio");
+        const randomAudio = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+        const selectedAudio = fs.readFileSync(path.join(audioDir, randomAudio));
+
+        // 🔗 Fetch repo details from GitHub
         const [, username, repoName] =
             githubRepoURL.match(/github\.com\/([^/]+)\/([^/]+)/) || [];
         if (!username || !repoName) throw new Error("Invalid GitHub URL format");
 
-        // Fetch repo details
-        const response = await fetch(
-            `https://api.github.com/repos/${username}/${repoName}`
-        );
-        if (!response.ok)
-            throw new Error(
-                `GitHub API request failed with status ${response.status}`
-            );
+        const response = await fetch(`https://api.github.com/repos/${username}/${repoName}`);
+        if (!response.ok) throw new Error(`GitHub API request failed: ${response.status}`);
         const repoData = await response.json();
 
-        // Format info
+        // 📝 Info text
         const formattedInfo = `
 *𝐇𝐄𝐋𝐋𝐎 DEAR!* 
 ──────────────────
@@ -41,7 +55,7 @@ cmd({
 *★ᴘᴀɪʀ ꜱɪᴛᴇ*
 > ${pairsiteURL}
 
-    ${readMore}
+${readMore}
 \`BOT NAME:\`
 > ${repoData.name}
 
@@ -56,30 +70,7 @@ cmd({
 ──────────────────
 \n> *© ʙʏ ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ* 🎐`;
 
-        // Send repo info with image
-        await _m.sendMessage(from, {
-            image: { url: "https://files.catbox.moe/pvhmgv.jpg" },
-            caption: formattedInfo,
-            contextInfo: {
-                mentionedJid: [msg.sender],
-                forwardingScore: 999,
-                isForwarded: true,
-            },
-        });
-
-        // Send audio
-        await _m.sendMessage(from, {
-            audio: { url: "https://files.catbox.moe/eqfc2j.mp3" },
-            mimetype: "audio/mp4",
-            ptt: true,
-            contextInfo: {
-                mentionedJid: [msg.sender],
-                forwardingScore: 999,
-                isForwarded: true,
-            },
-        });
-
-        // Contact message for verified context
+        // 📞 Verified contact
         const verifiedContact = {
             key: {
                 fromMe: false,
@@ -93,29 +84,42 @@ cmd({
                 }
             }
         };
-        
-        // Send image + caption + audio combined
-        await conn.sendMessage(from, { 
-            image: { url: `https://files.catbox.moe/7kl8va.jpg` },  
-            caption: status,
+
+        // 🖼️ Send random local image with caption (forwarded + verified contact)
+        await m.sendMessage(from, {
+            image: selectedImage,
+            caption: formattedInfo,
             contextInfo: {
-                mentionedJid: [m.sender],
+                mentionedJid: [msg.sender],
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
                     newsletterJid: '120363420646690174@newsletter',
                     newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
                     serverMessageId: 143
-                   }
                 }
-            },
-            { quoted: verifiedContact }
-        );
+            }
+        }, { quoted: verifiedContact });
+
+        // 🔊 Send random local audio (forwarded + verified contact)
+        await m.sendMessage(from, {
+            audio: selectedAudio,
+            mimetype: "audio/mp4",
+            ptt: true,
+            contextInfo: {
+                mentionedJid: [msg.sender],
+                forwardingScore: 999,
+                isForwarded: true,
+                forwardedNewsletterMessageInfo: {
+                    newsletterJid: '120363420646690174@newsletter',
+                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
+                    serverMessageId: 144 // unique from image
+                }
+            }
+        }, { quoted: verifiedContact });
 
     } catch (error) {
         console.error("Error in script command:", error);
-        await _m.reply(
-            "❌ Sorry, something went wrong while fetching the repository information."
-        );
+        await m.reply("❌ Error: " + error.message);
     }
 });

@@ -1,5 +1,18 @@
 const { cmd } = require('../command');
 const moment = require('moment-timezone');
+const fs = require('fs');
+const path = require('path');
+
+// 🔹 Helper: pick random image from src folder
+function getRandomImageBuffer() {
+  const imageDir = path.join(__dirname, "..", "src"); // adjust if needed
+  const files = fs.readdirSync(imageDir).filter(file =>
+    /\.(jpg|jpeg|png|gif)$/i.test(file)
+  );
+  if (files.length === 0) return Buffer.alloc(0);
+  const randomFile = files[Math.floor(Math.random() * files.length)];
+  return fs.readFileSync(path.join(imageDir, randomFile));
+}
 
 cmd({
   pattern: "uptime",
@@ -33,6 +46,9 @@ cmd({
 
   const uptimeText = `*ᴊꜰx ᴍᴅ-xᴠ3 Uptime:*\n🕒 ${runtime()}\n ʙᴏᴛ ɪꜱ ᴀᴄᴛɪᴠᴇ ᴛʜᴀɴ ʏᴏᴜʀ ɢꜰ!.`;
 
+  // 🔹 Pick random image buffer from src folder for thumbnail
+  const randomThumb = getRandomImageBuffer();
+
   await Void.sendMessage(m.chat, {
     text: uptimeText,
     contextInfo: {
@@ -45,7 +61,7 @@ cmd({
       externalAdReply: {
         title: "ᴊꜰx ᴍᴅ-xᴠ3",
         body: "Uptime Monitor by ᴊꜰx ᴍᴅ-xᴠ3",
-        thumbnailUrl: "https://files.catbox.moe/j5jjt6.jpg",
+        thumbnail: randomThumb, // ✅ local random thumbnail
         mediaType: 1,
         renderLargerThumbnail: true,
         showAdAttribution: true,

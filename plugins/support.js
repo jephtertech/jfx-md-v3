@@ -5,6 +5,8 @@ const { runtime } = require('../lib/functions');
 const axios = require('axios');
 const more = String.fromCharCode(8206)
 const readMore = more.repeat(4001)
+const fs = require("fs");
+const path = require("path");
 
 cmd({
     pattern: "support",
@@ -39,31 +41,60 @@ wa.me/+2349046157539?text=Support!
 
 `;
 
+        // Pick random image from src/
+        const imageDir = path.join(__dirname, "../src");
+        const images = fs.readdirSync(imageDir).filter(file => file.match(/\.(jpg|png|webp)$/i));
+        const randomImage = path.join(imageDir, images[Math.floor(Math.random() * images.length)]);
+
+        // Pick random audio from audio/
+        const audioDir = path.join(__dirname, "../audio");
+        const audios = fs.readdirSync(audioDir).filter(file => file.match(/\.(mp3|mp4)$/i));
+        const randomAudio = path.join(audioDir, audios[Math.floor(Math.random() * audios.length)]);
+
+        // Verified contact (quoted base)
+        const verifiedContact = {
+            key: {
+                fromMe: false,
+                participant: `0@s.whatsapp.net`,
+                remoteJid: "status@broadcast"
+            },
+            message: {
+                contactMessage: {
+                    displayName: "ᴊꜰx ᴍᴅ-xᴠ3",
+                    vcard: "BEGIN:VCARD\nVERSION:3.0\nFN:ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ 🧚‍♀️\nORG:ᴊꜰx ᴍᴅ-xᴠ3;\nTEL;type=CELL;type=VOICE;waid=2349046157539:+2349046157539\nEND:VCARD"
+                }
+            }
+        };
+
+        // Channel forwarding context (reusable)
+        const channelContext = {
+            mentionedJid: [m.sender],
+            forwardingScore: 999,
+            isForwarded: true,
+            forwardedNewsletterMessageInfo: {
+                newsletterJid: '120363420646690174@newsletter',
+                newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
+                serverMessageId: 143
+            }
+        };
+
 await conn.sendMessage(
             from,
             {
-                image: { url: `https://files.catbox.moe/7w1yde.jpg` },
+                image: fs.readFileSync(randomImage),
                 caption: dec,
-                contextInfo: {
-                    mentionedJid: [m.sender],
-                    forwardingScore: 999,
-                    isForwarded: true,
-                    forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363420646690174@newsletter',
-                        newsletterName: '『 ᴊꜰx ᴍᴅ-xᴠ3 』',
-                        serverMessageId: 143
-                    }
-                }
+                contextInfo: channelContext
             },
-            { quoted: mek }
+            { quoted: verifiedContact }
         );
 
         // Send audio
         await conn.sendMessage(from, {
-            audio: { url: 'https://files.catbox.moe/eqfc2j.mp3' },
+            audio: fs.readFileSync(randomAudio),
             mimetype: 'audio/mp4',
-            ptt: true
-        }, { quoted: mek });
+            ptt: true,
+            contextInfo: channelContext
+        }, { quoted: verifiedContact });
         
     } catch (e) {
         console.log(e);

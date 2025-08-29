@@ -6,6 +6,20 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
+const verifiedContact = {
+    key: {
+        fromMe: false,
+        participant: `0@s.whatsapp.net`,
+        remoteJid: "status@broadcast"
+    },
+    message: {
+        contactMessage: {
+            displayName: "ᴊꜰx ᴍᴅ-xᴠ3",
+            vcard: "BEGIN:VCARD\nVERSION:3.0\nFN: ᴊꜰx ᴍᴅ-xᴠ3\nORG:ᴊꜰx ᴍᴅ-xᴠ3;\nTEL;type=CELL;type=VOICE;waid=93775551335:+2349046157539\nEND:VCARD"
+        }
+    }
+};
+
 const getRandomImage = () => {
     try {
         const srcPath = path.join(__dirname, '../src');
@@ -24,6 +38,27 @@ const getRandomImage = () => {
     } catch (e) {
         console.log('Error getting random image:', e);
         return 'https://files.catbox.moe/cz7xle.jpgg'; 
+    }
+};
+
+const getRandomAudio = () => {
+    try {
+        const srcPath = path.join(__dirname, '../src');
+        const files = fs.readdirSync(srcPath);
+        const audioFiles = files.filter(file => 
+            file.endsWith('.mp3') || file.endsWith('.mp4') || file.endsWith('.ogg')
+        );
+        
+        if (audioFiles.length === 0) {
+            console.log('No audio files found in src folder');
+            return 'https://files.catbox.moe/eqfc2j.mp3'; 
+        }
+        
+        const randomAudio = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+        return path.join(srcPath, randomAudio);
+    } catch (e) {
+        console.log('Error getting random audio:', e);
+        return 'https://files.catbox.moe/eqfc2j.mp3'; 
     }
 };
 
@@ -77,21 +112,6 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ╰━━━━━━━━━━━━━━⊷
 > ${config.OWNER_NAME}`;
 
-        // Contact message for verified context
-        const verifiedContact = {
-            key: {
-                fromMe: false,
-                participant: `0@s.whatsapp.net`,
-                remoteJid: "status@broadcast"
-            },
-            message: {
-                contactMessage: {
-                    displayName: "ᴊꜰx ᴍᴅ-xᴠ3",
-                    vcard: "BEGIN:VCARD\nVERSION:3.0\nFN: ᴊꜰx ᴍᴅ-xᴠ3\nORG:ᴊꜰx ᴍᴅ-xᴠ3;\nTEL;type=CELL;type=VOICE;waid=93775551335:+2349046157539\nEND:VCARD"
-                }
-            }
-        };
-
         await conn.sendMessage(
             from,
             {
@@ -111,13 +131,8 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
             { quoted: verifiedContact }
         );
 
-        const audioUrls = [
-            'https://files.catbox.moe/eqfc2j.mp3'
-        ];
-        const randomAudioUrl = audioUrls[Math.floor(Math.random() * audioUrls.length)];
-
         await conn.sendMessage(from, {
-            audio: { url: randomAudioUrl },
+            audio: { url: getRandomAudio() },
             mimetype: 'audio/mp4',
             ptt: true
         }, { quoted: verifiedContact });
@@ -170,7 +185,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         await conn.sendMessage(
             from,
             {
-                image: { url: 'https://files.catbox.moe/7w1yde.jpg' },
+                image: { url: getRandomImage() },
                 caption: dec,
                 contextInfo: {
                     mentionedJid: [m.sender],
@@ -183,8 +198,14 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
                     }
                 }
             },
-            { quoted: mek }
+            { quoted: verifiedContact }
         );
+
+        await conn.sendMessage(from, {
+            audio: { url: getRandomAudio() },
+            mimetype: 'audio/mp4',
+            ptt: true
+        }, { quoted: verifiedContact });
 
     } catch (e) {
         console.log(e);
@@ -228,7 +249,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         await conn.sendMessage(
             from,
             {
-                image: { url: 'https://files.catbox.moe/j5jjt6.jpg' },
+                image: { url: getRandomImage() },
                 caption: dec,
                 contextInfo: {
                     mentionedJid: [m.sender],
@@ -241,8 +262,14 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
                     }
                 }
             },
-            { quoted: mek }
+            { quoted: verifiedContact }
         );
+
+        await conn.sendMessage(from, {
+            audio: { url: getRandomAudio() },
+            mimetype: 'audio/mp4',
+            ptt: true
+        }, { quoted: verifiedContact });
 
     } catch (e) {
         console.log(e);
@@ -295,7 +322,7 @@ async (conn, mek, m, { from, quoted, reply }) => {
         await conn.sendMessage(
             from,
             {
-                image: { url: 'https://files.catbox.moe/7w1yde.jpg' },
+                image: { url: getRandomImage() },
                 caption: dec,
                 contextInfo: {
                     mentionedJid: [m.sender],
@@ -308,8 +335,14 @@ async (conn, mek, m, { from, quoted, reply }) => {
                     }
                 }
             },
-            { quoted: mek }
+            { quoted: verifiedContact }
         );
+
+        await conn.sendMessage(from, {
+            audio: { url: getRandomAudio() },
+            mimetype: 'audio/mp4',
+            ptt: true
+        }, { quoted: verifiedContact });
 
     } catch (e) {
         console.log(e);
@@ -367,7 +400,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         await conn.sendMessage(
             from,
             {
-                image: { url: 'https://files.catbox.moe/7kl8va.jpg' },
+                image: { url: getRandomImage() },
                 caption: dec,
                 contextInfo: {
                     mentionedJid: [m.sender],
@@ -380,8 +413,14 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
                     }
                 }
             },
-            { quoted: mek }
+            { quoted: verifiedContact }
         );
+
+        await conn.sendMessage(from, {
+            audio: { url: getRandomAudio() },
+            mimetype: 'audio/mp4',
+            ptt: true
+        }, { quoted: verifiedContact });
 
     } catch (e) {
         console.log(e);
@@ -432,7 +471,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         await conn.sendMessage(
             from,
             {
-                image: { url: 'https://files.catbox.moe/cz7xle.jpg' },
+                image: { url: getRandomImage() },
                 caption: dec,
                 contextInfo: {
                     mentionedJid: [m.sender],
@@ -445,8 +484,14 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
                     }
                 }
             },
-            { quoted: mek }
+            { quoted: verifiedContact }
         );
+
+        await conn.sendMessage(from, {
+            audio: { url: getRandomAudio() },
+            mimetype: 'audio/mp4',
+            ptt: true
+        }, { quoted: verifiedContact });
 
     } catch (e) {
         console.log(e);
@@ -492,7 +537,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         await conn.sendMessage(
             from,
             {
-                image: { url: 'https://files.catbox.moe/cz7xle.jpg' },
+                image: { url: getRandomImage() },
                 caption: dec,
                 contextInfo: {
                     mentionedJid: [m.sender],
@@ -505,8 +550,14 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
                     }
                 }
             },
-            { quoted: mek }
+            { quoted: verifiedContact }
         );
+
+        await conn.sendMessage(from, {
+            audio: { url: getRandomAudio() },
+            mimetype: 'audio/mp4',
+            ptt: true
+        }, { quoted: verifiedContact });
 
     } catch (e) {
         console.log(e);
@@ -545,7 +596,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         await conn.sendMessage(
             from,
             {
-                image: { url: 'https://files.catbox.moe/weux9l.jpg' },
+                image: { url: getRandomImage() },
                 caption: dec,
                 contextInfo: {
                     mentionedJid: [m.sender],
@@ -558,8 +609,14 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
                     }
                 }
             },
-            { quoted: mek }
+            { quoted: verifiedContact }
         );
+
+        await conn.sendMessage(from, {
+            audio: { url: getRandomAudio() },
+            mimetype: 'audio/mp4',
+            ptt: true
+        }, { quoted: verifiedContact });
 
     } catch (e) {
         console.log(e);
@@ -612,7 +669,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         await conn.sendMessage(
             from,
             {
-                image: { url: 'https://files.catbox.moe/weux9l.jpg' },
+                image: { url: getRandomImage() },
                 caption: dec,
                 contextInfo: {
                     mentionedJid: [m.sender],
@@ -625,8 +682,14 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
                     }
                 }
             },
-            { quoted: mek }
+            { quoted: verifiedContact }
         );
+
+        await conn.sendMessage(from, {
+            audio: { url: getRandomAudio() },
+            mimetype: 'audio/mp4',
+            ptt: true
+        }, { quoted: verifiedContact });
 
     } catch (e) {
         console.log(e);
@@ -663,7 +726,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         await conn.sendMessage(
             from,
             {
-                image: { url: 'https://files.catbox.moe/weux9l.jpg' },
+                image: { url: getRandomImage() },
                 caption: dec,
                 contextInfo: {
                     mentionedJid: [m.sender],
@@ -676,8 +739,14 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
                     }
                 }
             },
-            { quoted: mek }
+            { quoted: verifiedContact }
         );
+
+        await conn.sendMessage(from, {
+            audio: { url: getRandomAudio() },
+            mimetype: 'audio/mp4',
+            ptt: true
+        }, { quoted: verifiedContact });
 
     } catch (e) {
         console.log(e);
@@ -731,7 +800,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         await conn.sendMessage(
             from,
             {
-                image: { url: 'https://files.catbox.moe/weux9l.jpg' },
+                image: { url: getRandomImage() },
                 caption: dec,
                 contextInfo: {
                     mentionedJid: [m.sender],
@@ -744,8 +813,14 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
                     }
                 }
             },
-            { quoted: mek }
+            { quoted: verifiedContact }
         );
+
+        await conn.sendMessage(from, {
+            audio: { url: getRandomAudio() },
+            mimetype: 'audio/mp4',
+            ptt: true
+        }, { quoted: verifiedContact });
 
     } catch (e) {
         console.log(e);
@@ -782,7 +857,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         await conn.sendMessage(
             from,
             {
-                image: { url: 'https://files.catbox.moe/weux9l.jpg' },
+                image: { url: getRandomImage() },
                 caption: dec,
                 contextInfo: {
                     mentionedJid: [m.sender],
@@ -795,8 +870,14 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
                     }
                 }
             },
-            { quoted: mek }
+            { quoted: verifiedContact }
         );
+
+        await conn.sendMessage(from, {
+            audio: { url: getRandomAudio() },
+            mimetype: 'audio/mp4',
+            ptt: true
+        }, { quoted: verifiedContact });
 
     } catch (e) {
         console.log(e);

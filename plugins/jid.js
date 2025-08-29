@@ -8,8 +8,23 @@ cmd({
     filename: __filename,
 }, async (conn, mek, m, { from, isGroup, sender, reply }) => {
     try {
-        // Newsletter message configuration
-        const newsletterConfig = {
+        // Verified contact (quoted base)
+        const verifiedContact = {
+            key: {
+                fromMe: false,
+                participant: `0@s.whatsapp.net`,
+                remoteJid: "status@broadcast"
+            },
+            message: {
+                contactMessage: {
+                    displayName: "ᴊꜰx ᴍᴅ-xᴠ3",
+                    vcard: "BEGIN:VCARD\nVERSION:3.0\nFN:ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ 🧚‍♀️\nORG:ᴊꜰx ᴍᴅ-xᴠ3;\nTEL;type=CELL;type=VOICE;waid=2349046157539:+2349046157539\nEND:VCARD"
+                }
+            }
+        };
+
+        // Channel forwarding context (reusable)
+        const channelContext = {
             mentionedJid: [m.sender],
             forwardingScore: 999,
             isForwarded: true,
@@ -28,8 +43,8 @@ cmd({
         // Send the newsletter-style message
         await conn.sendMessage(from, {
             text: response,
-            contextInfo: newsletterConfig
-        });
+            contextInfo: channelContext
+        }, { quoted: verifiedContact });
 
     } catch (e) {
         console.error("Error:", e);

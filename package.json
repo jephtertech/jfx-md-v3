@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "npx pm2 start index.js --deep-monitoring --attach --name JFX-V3",
-    "stop": "npx pm2 stop VERONICA-AI",
-    "restart": "npx pm2 restart VERONICA-AI"
+    "stop": "npx pm2 stop JFX-V3",
+    "restart": "npx pm2 restart JFX-V3"
   },
   "dependencies": {
     "@adiwajshing/keyed-db": "^0.2.4",

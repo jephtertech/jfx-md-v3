@@ -1,5 +1,7 @@
-const { cmd, commands } = require('../command');
+const { cmd } = require('../command');
 const os = require("os");
+const fs = require("fs");
+const path = require("path");
 const { runtime } = require('../lib/functions');
 
 cmd({
@@ -10,30 +12,40 @@ cmd({
     react: "📟",
     filename: __filename
 },
-async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+async (conn, mek, m, { from, pushname, reply }) => {
     try {
         // Get system info
         const platform = "RENDER"; // Fixed deployment platform
-        const release = os.release(); // OS version
-        const cpuModel = os.cpus()[0].model; // CPU info
-        const totalMem = (os.totalmem() / 1024 / 1024).toFixed(2); // Total RAM in MB
-        const usedMem = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2); // Used RAM in MB
+        const release = os.release(); 
+        const cpuModel = os.cpus()[0].model;
+        const totalMem = (os.totalmem() / 1024 / 1024).toFixed(2);
+        const usedMem = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
 
-        // Stylish and detailed system status message
+        // Stylish status text
         const status = `*Good ${
-  new Date().getHours() < 12 ? 'Morning' : 
-  (new Date().getHours() < 18 ? 'Afternoon' : 'Evening')
-}, ${pushname}!*💫
+          new Date().getHours() < 12 ? 'Morning' : 
+          (new Date().getHours() < 18 ? 'Afternoon' : 'Evening')
+        }, ${pushname}!*💫
 ╭─❰ *ᴊꜰx ᴍᴅ-xᴠ3* ❱─┈⊷
 ┃ *𝖴ᴘᴛɪᴍᴇ* : *${runtime(process.uptime())}*
-┃ *𝖱ᴀᴍ ᴜsᴀɢᴇ* : *${totalMem}MB*
+┃ *𝖱ᴀᴍ ᴜsᴀɢᴇ* : *${totalMem} MB*
 ┃ *𝖣ᴇᴘʟᴏʏᴇᴅ ᴏɴ* : *${platform}*
 ┃ *𝖮ᴡɴᴇʀ* : *ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ*
 ┃ *𝖵ᴇʀsɪᴏɴ* : *3.𝟢.𝟢*
 ╰───────────┈⊷
 > ʙʏ ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ`;
-          
-        // Contact message for verified context
+
+        // Pick random image from src/
+        const imageDir = path.join(__dirname, "../src");
+        const images = fs.readdirSync(imageDir).filter(file => file.match(/\.(jpg|png|webp)$/i));
+        const randomImage = path.join(imageDir, images[Math.floor(Math.random() * images.length)]);
+
+        // Pick random audio from audio/
+        const audioDir = path.join(__dirname, "../audio");
+        const audios = fs.readdirSync(audioDir).filter(file => file.match(/\.(mp3|mp4)$/i));
+        const randomAudio = path.join(audioDir, audios[Math.floor(Math.random() * audios.length)]);
+
+        // Verified contact (quoted base)
         const verifiedContact = {
             key: {
                 fromMe: false,
@@ -43,35 +55,37 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
             message: {
                 contactMessage: {
                     displayName: "ᴊꜰx ᴍᴅ-xᴠ3",
-                    vcard: "BEGIN:VCARD\nVERSION:3.0\nFN: ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ 🧚‍♀️\nORG:Vᴇʀᴏɴɪᴄᴀ BOT;\nTEL;type=CELL;type=VOICE;waid=93775551335:+2349046157539\nEND:VCARD"
+                    vcard: "BEGIN:VCARD\nVERSION:3.0\nFN:ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ 🧚‍♀️\nORG:ᴊꜰx ᴍᴅ-xᴠ3;\nTEL;type=CELL;type=VOICE;waid=2349046157539:+2349046157539\nEND:VCARD"
                 }
             }
         };
-        
-        // Send image + caption + audio combined
-        await conn.sendMessage(from, { 
-            image: { url: `https://files.catbox.moe/3287mw.jpg` },  
-            caption: status,
-            contextInfo: {
-                mentionedJid: [m.sender],
-                forwardingScore: 999,
-                isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363420646690174@newsletter',
-                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
-                    serverMessageId: 143
-                   }
-                }
-            },
-            { quoted: verifiedContact }
-        );
 
-        // Attach audio within the same "quoted" message for grouping
+        // Channel forwarding context (reusable)
+        const channelContext = {
+            mentionedJid: [m.sender],
+            forwardingScore: 999,
+            isForwarded: true,
+            forwardedNewsletterMessageInfo: {
+                newsletterJid: '120363420646690174@newsletter',
+                newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
+                serverMessageId: 143
+            }
+        };
+
+        // Send image + caption with channel context
         await conn.sendMessage(from, { 
-            audio: { url: 'https://files.catbox.moe/eqfc2j.mp3' },
+            image: fs.readFileSync(randomImage),
+            caption: status,
+            contextInfo: channelContext
+        }, { quoted: verifiedContact });
+
+        // Send random audio (PTT style) with channel context
+        await conn.sendMessage(from, { 
+            audio: fs.readFileSync(randomAudio),
             mimetype: 'audio/mp4',
-            ptt: true 
-             }, { quoted: verifiedContact });
+            ptt: true,
+            contextInfo: channelContext
+        }, { quoted: verifiedContact });
 
     } catch (e) {
         console.error("Error in alive command:", e);

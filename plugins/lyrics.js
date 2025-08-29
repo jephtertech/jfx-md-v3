@@ -15,9 +15,14 @@ async function lyricsCommand(sock, chatId, songTitle, message) {
 
         const data = await res.json();
 
-        const title = data.title || songTitle;
-        const artist = data.artist || "Unknown Artist";
-        const lyrics = data.lyrics || null;
+        const result = data.result;
+        if (!result) {
+            throw new Error('No result in API response');
+        }
+
+        const title = result.title || songTitle;
+        const artist = result.artist || "Unknown Artist";
+        const lyrics = result.lyrics || null;
 
         if (!lyrics) {
             await sock.sendMessage(chatId, {

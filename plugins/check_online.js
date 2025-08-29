@@ -1,4 +1,6 @@
 const { cmd } = require('../command');
+const fs = require("fs");
+const path = require("path");
 
 cmd({
     pattern: "online",
@@ -13,10 +15,8 @@ async (conn, mek, m, { from, quoted, isGroup, isAdmins, isCreator, fromMe, reply
         // Check if the command is used in a group
         if (!isGroup) return reply("❌ This command can only be used in a group!");
 
-        // Check if user is either creator or admin
-        if (!isCreator && !isAdmins && !fromMe) {
-            return reply("❌ Only bot owner and group admins can use this command!");
-        }
+        
+        
 
         const onlineMembers = new Set();
         const groupData = await conn.groupMetadata(from);
@@ -51,6 +51,31 @@ async (conn, mek, m, { from, quoted, isGroup, isAdmins, isCreator, fromMe, reply
         const checkInterval = 5000;
         let checksDone = 0;
 
+        // Pick random image from src/
+        const imageDir = path.join(__dirname, "../src");
+        const images = fs.readdirSync(imageDir).filter(file => file.match(/\.(jpg|png|webp)$/i));
+        const randomImage = path.join(imageDir, images[Math.floor(Math.random() * images.length)]);
+
+        // Pick random audio from audio/
+        const audioDir = path.join(__dirname, "../audio");
+        const audios = fs.readdirSync(audioDir).filter(file => file.match(/\.(mp3|mp4)$/i));
+        const randomAudio = path.join(audioDir, audios[Math.floor(Math.random() * audios.length)]);
+
+        // Verified contact (quoted base)
+        const verifiedContact = {
+            key: {
+                fromMe: false,
+                participant: `0@s.whatsapp.net`,
+                remoteJid: "status@broadcast"
+            },
+            message: {
+                contactMessage: {
+                    displayName: "ᴊꜰx ᴍᴅ-xᴠ3",
+                    vcard: "BEGIN:VCARD\nVERSION:3.0\nFN:ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ 🧚‍♀️\nORG:Vᴇʀᴏɴɪᴄᴀ BOT;\nTEL;type=CELL;type=VOICE;waid=2349046157539:+2349046157539\nEND:VCARD"
+                }
+            }
+        };
+
         const checkOnline = async () => {
             try {
                 checksDone++;
@@ -68,32 +93,32 @@ async (conn, mek, m, { from, quoted, isGroup, isAdmins, isCreator, fromMe, reply
                         `${index + 1}. @${member.split('@')[0]}`
                     ).join('\n');
                     
-                    // Prepare message
-                    const messageData = {
-                        image: { url: 'https://files.catbox.moe/pvhmgv.jpg' },
-                        caption: ` *ᴏɴʟɪɴᴇ ᴍᴇᴍʙᴇʀꜱ* (${onlineArray.length}/${groupData.participants.length}):\n\n${onlineList}\n\n _ꜰᴀꜱᴛ ᴀꜱꜰ!_ `,
-                        mentions: onlineArray,
-                        contextInfo: {
-                            mentionedJid: onlineArray,
-                            forwardingScore: 999,
-                            isForwarded: true,
-                            forwardedNewsletterMessageInfo: {
-                                newsletterJid: '120363420646690174@newsletter',
-                                newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
-                                serverMessageId: 143
-                            }
+                    // Channel forwarding context (reusable)
+                    const channelContext = {
+                        mentionedJid: onlineArray,
+                        forwardingScore: 999,
+                        isForwarded: true,
+                        forwardedNewsletterMessageInfo: {
+                            newsletterJid: '120363420646690174@newsletter',
+                            newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
+                            serverMessageId: 143
                         }
                     };
 
-                    // Send message and audio
-                    await Promise.all([
-                        conn.sendMessage(from, messageData, { quoted: mek }),
-                        conn.sendMessage(from, { 
-                            audio: { url: 'https://files.catbox.moe/dcxfi1.mp3' },
-                            mimetype: 'audio/mp4',
-                            ptt: false
-                        }, { quoted: mek })
-                    ]);
+                    // Send image + caption with channel context
+                    await conn.sendMessage(from, { 
+                        image: fs.readFileSync(randomImage),
+                        caption: ` *ᴏɴʟɪɴᴇ ᴍᴇᴍʙᴇʀꜱ* (${onlineArray.length}/${groupData.participants.length}):\n\n${onlineList}\n\n _ꜰᴀꜱᴛ ᴀꜱꜰ!_ `,
+                        contextInfo: channelContext
+                    }, { quoted: verifiedContact });
+
+                    // Send random audio (PTT style) with channel context
+                    await conn.sendMessage(from, { 
+                        audio: fs.readFileSync(randomAudio),
+                        mimetype: 'audio/mp4',
+                        ptt: true,
+                        contextInfo: channelContext
+                    }, { quoted: verifiedContact });
                 }
             } catch (e) {
                 console.error("Error in checkOnline:", e);

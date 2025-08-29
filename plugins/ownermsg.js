@@ -1,4 +1,30 @@
 const { cmd } = require('../command');
+const fs = require('fs').promises;
+const path = require('path');
+
+// Function to get random image from src folder
+async function getRandomImage() {
+    try {
+        const srcFolder = path.join(__dirname, 'src');
+        const files = await fs.readdir(srcFolder);
+        const imageFiles = files.filter(file => 
+            file.endsWith('.jpg') || 
+            file.endsWith('.png') || 
+            file.endsWith('.jpeg')
+        );
+        
+        if (imageFiles.length === 0) {
+            throw new Error('No images found in src folder');
+        }
+        
+        const randomImage = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+        return path.join(srcFolder, randomImage);
+    } catch (error) {
+        console.error('Error getting random image:', error);
+        // Fallback image path in case of error
+        return path.join(__dirname, 'src', 'default.jpg');
+    }
+}
 
 cmd({
     pattern: "block",
@@ -20,10 +46,13 @@ async (conn, m, { reply, react }) => {
         const chatId = m.chat; // Get current chat ID
         await react("✅");
         
+        // Get random image
+        const imagePath = await getRandomImage();
+        
         // Combine both messages into one send operation
         await conn.sendMessage(m.chat, { 
             text: `_Successfully blocked this chat_`,
-            image: { url: `https://files.catbox.moe/pvhmgv.jpg` },  
+            image: { url: `file://${imagePath}` },  
             caption: "*ᴊꜰx ᴍᴅ-xᴠ3 𝐍𝐄𝐖𝐒𝐋𝐄𝐓𝐓𝐄𝐑*\n\nThis chat has been blocked by the owner.",
             contextInfo: {
                 mentionedJid: [m.sender],
@@ -65,11 +94,14 @@ async (conn, m, { reply, react }) => {
         const chatId = m.chat; // Get current chat ID
         await react("✅");
         
+        // Get random image
+        const imagePath = await getRandomImage();
+        
         // Combine both messages into one send operation
         await conn.sendMessage(m.chat, { 
             text: `_Successfully unblocked this chat_`,
-            image: { url: `https://files.catbox.moe/pvhmgv.jpg` },  
-            caption: "*ᴊꜰx ᴍᴅ-xᴠ3 𝐍𝐄𝐖𝐒𝐋𝐄𝐓𝐓𝐄𝐑*\n\nThis chat has been unblocked by the owner.",
+            image: { url: `file://${imagePath}` },  
+            caption: "*ᴊꜰx ᴍᴅ-xᴠ3 𝐍𝐄𝐖𝐒𝐋�{E𝐓𝐓𝐄𝐑*\n\nThis chat has been unblocked by the owner.",
             contextInfo: {
                 mentionedJid: [m.sender],
                 forwardingScore: 999,

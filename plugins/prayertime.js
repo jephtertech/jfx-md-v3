@@ -2,6 +2,7 @@ const axios = require('axios');
 const config = require('../config');
 const { cmd, commands } = require('../command');
 const fetch = require('node-fetch'); 
+const fs = require('fs');
 
 cmd({
     pattern: "praytime", 
@@ -49,11 +50,16 @@ async(conn, mek, m, {from, l, quoted, body, isCmd, command, args, q, isGroup, se
         const temperature = weather.temperature !== null ? `${weather.temperature}°C` : 'Data not available';
         dec += `🌡️ *Temperature*: ${temperature}\n`;
 
+        // Get random image from src folder
+        const imageFiles = fs.readdirSync("./src").filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
+        if (imageFiles.length === 0) throw new Error("No image files found in src folder");
+        const randomImage = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+
         // Sending the image with the caption and context info
         await conn.sendMessage(
             from,
             {
-                image: { url: `https://files.catbox.moe/tejxaj.jpg` }, // Image URL here
+                image: fs.readFileSync(`./src/${randomImage}`),
                 caption: dec,
                 contextInfo: {
                     mentionedJid: [m.sender],
@@ -69,9 +75,14 @@ async(conn, mek, m, {from, l, quoted, body, isCmd, command, args, q, isGroup, se
             { quoted: mek }
         );
 
+        // Get random audio from audio folder
+        const audioFiles = fs.readdirSync("./audio").filter(file => /\.(mp3|mp4|ogg|wav)$/i.test(file));
+        if (audioFiles.length === 0) throw new Error("No audio files found in audio folder");
+        const randomAudio = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+
         // Optionally, send an audio file related to the prayer time
         await conn.sendMessage(from, {
-            audio: { url: 'https://github.com/JawadYTX/KHAN-DATA/raw/refs/heads/main/autovoice/Islamic.m4a' },
+            audio: fs.readFileSync(`./audio/${randomAudio}`),
             mimetype: 'audio/mp4',
             ptt: false
         }, { quoted: mek });

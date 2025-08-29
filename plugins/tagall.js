@@ -1,6 +1,8 @@
 const config = require('../config')
 const { cmd, commands } = require('../command')
 const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('../lib/functions')
+const fs = require('fs');
+const path = require('path');
 
 cmd({
     pattern: "tagall",
@@ -18,8 +20,11 @@ async (conn, mek, m, { from, participants, reply, isGroup, senderNumber, groupAd
         const botOwner = conn.user.id.split(":")[0]; // Extract bot owner's number
         const senderJid = senderNumber + "@s.whatsapp.net";
 
-        if (!groupAdmins.includes(senderJid) && senderNumber !== botOwner) {
-            return reply("❌ Only group admins or the bot owner can use this command.");
+        // Ignore bot owner and group admins
+        if (senderJid === botOwner || groupAdmins.includes(senderJid)) {
+            // allowed, do nothing
+        } else {
+            return reply("⚠️ Only group admins or the bot owner can use this command.");
         }
 
         let groupInfo = await conn.groupMetadata(from).catch(() => null);
@@ -60,6 +65,18 @@ async (conn, mek, m, { from, participants, reply, isGroup, senderNumber, groupAd
             }
         }
 
+        // Load random image from src folder
+        const imageFolder = path.join(__dirname, '../src');
+        const imageFiles = fs.readdirSync(imageFolder).filter(file => file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png'));
+        if (imageFiles.length === 0) {
+            return reply("❌ No images found in the src folder.");
+        }
+        const randomImage = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+        const imagePath = path.join(imageFolder, randomImage);
+        const imageBuffer = await getBuffer(imagePath); // Assuming getBuffer can handle local paths; if not, use fs.readFileSync
+
+        // Note: No audios in this command, so skipping audio randomization. If needed in future, add similar logic for audio folder.
+
         await conn.sendMessage(from, {
             text: teks,
             mentions: participants.map(a => a.id),
@@ -67,7 +84,7 @@ async (conn, mek, m, { from, participants, reply, isGroup, senderNumber, groupAd
                 externalAdReply: {
                     title: "GROUP PINGER",
                     body: "Powered by ᴊꜰx ᴍᴅ-xᴠ3",
-                    thumbnailUrl: "https://files.catbox.moe/7w1yde.jpg",
+                    thumbnail: imageBuffer, // Use buffer instead of URL
                     sourceUrl: "https://github.com/Jeffreyfx1",
                     mediaType: 1,
                     renderLargerThumbnail: false,
@@ -78,7 +95,7 @@ async (conn, mek, m, { from, participants, reply, isGroup, senderNumber, groupAd
                 forwardedNewsletterMessageInfo: {
                     newsletterJid: "120363420646690174@newsletter",
                     newsletterName: "ᴊꜰx ᴍᴅ-xᴠ3",
-                    serverMessageId: "",
+                    serverMessageId: "2",
                 }
             }
         }, { quoted: fakeContact });
@@ -88,4 +105,3 @@ async (conn, mek, m, { from, participants, reply, isGroup, senderNumber, groupAd
         reply(`❌ *Error Occurred !!*\n\n${e.message || e}`);
     }
 });
-                      

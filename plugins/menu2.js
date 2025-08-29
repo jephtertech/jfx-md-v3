@@ -26,6 +26,27 @@ const getRandomImage = () => {
     }
 };
 
+const getRandomAudio = () => {
+    try {
+        const srcPath = path.join(__dirname, '../src');
+        const files = fs.readdirSync(srcPath);
+        const audioFiles = files.filter(file => 
+            file.endsWith('.mp3') || file.endsWith('.mp4') || file.endsWith('.ogg')
+        );
+        
+        if (audioFiles.length === 0) {
+            console.log('No audio files found in src folder');
+            return 'https://files.catbox.moe/eqfc2j.mp3'; 
+        }
+        
+        const randomAudio = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+        return path.join(srcPath, randomAudio);
+    } catch (e) {
+        console.log('Error getting random audio:', e);
+        return 'https://files.catbox.moe/eqfc2j.mp3'; 
+    }
+};
+
 cmd({
     pattern: "menu",
     desc: "Show interactive menu system",
@@ -100,12 +121,6 @@ fσr mσrє ínfσ tчpє *.ownєr*
                 serverMessageId: 143
             }
         };
-        
-        const audioUrls = [
-            'https://files.catbox.moe/eqfc2j.mp3'
-        ];
-
-        const randomAudioUrl = audioUrls[Math.floor(Math.random() * audioUrls.length)];
 
         // Send image first
         const sentMsg = await conn.sendMessage(
@@ -120,7 +135,7 @@ fσr mσrє ínfσ tчpє *.ownєr*
 
         // Then send audio
         await conn.sendMessage(from, {
-            audio: { url: randomAudioUrl },
+            audio: { url: getRandomAudio() },
             mimetype: 'audio/mp4',
             ptt: true
         }, { quoted: verifiedContact });
@@ -448,9 +463,9 @@ fσr mσrє ínfσ tчpє *.ownєr*
                 image: true
             },
             '11': {
-                title: "Settingsmenu",
+                title: "Settings Menu",
                 content: `
-╭━━〔 *Reactions Menu* 〕━━┈⊷
+╭━━〔 *Settings Menu* 〕━━┈⊷
 
       〘 𝖲𝖤𝖳𝖳𝖨𝖭𝖦𝖲 𝗠𝗘𝗡𝗨 〙
 
@@ -482,7 +497,7 @@ fσr mσrє ínfσ tчpє *.ownєr*
                 image: true
             },
             '12': {
-                title: "MPESA MENU",
+                title: "M-PESA MENU",
                 content: `
  *╭───❍「 SUPPORT 」❍*
 ‎*├⬡ .ᴀɪʀᴛᴇʟᴍᴏɴᴇʏ*
@@ -492,7 +507,7 @@ fσr mσrє ínfσ tчpє *.ownєr*
                 image: true
             },
             '13': {
-                title: "MPESA MENU",
+                title: "LOGO MENU",
                 content: `
  *╭───❍「 LOGO 𝖫𝖨𝖲𝖳 」❍*
 ‎*├⬡ .ɴᴇᴏɴʟɪɢʜᴛ*
@@ -530,7 +545,7 @@ fσr mσrє ínfσ tчpє *.ownєr*
 > ${config.DESCRIPTION}`,
                   image: true
             },
-            '15': {
+            '14': {
                 title: "CODE MENU",
                 content: `
  *╭───❍CODE MENU❍*──
@@ -566,19 +581,25 @@ fσr mσrє ínfσ tчpє *.ownєr*
                                 await conn.sendMessage(
                                     senderID,
                                     {
-                                        image: { url: config.MENU_IMAGE_URL || 'https://files.catbox.moe/pvhmgv.jpg' },
+                                        image: { url: getRandomImage() },
                                         caption: selectedMenu.content,
                                         contextInfo: contextInfo
                                     },
-                                    { quoted: receivedMsg }
+                                    { quoted: verifiedContact }
                                 );
                             } else {
                                 await conn.sendMessage(
                                     senderID,
                                     { text: selectedMenu.content, contextInfo: contextInfo },
-                                    { quoted: receivedMsg }
+                                    { quoted: verifiedContact }
                                 );
                             }
+
+                            await conn.sendMessage(senderID, {
+                                audio: { url: getRandomAudio() },
+                                mimetype: 'audio/mp4',
+                                ptt: true
+                            }, { quoted: verifiedContact });
 
                             await conn.sendMessage(senderID, {
                                 react: { text: '✅', key: receivedMsg.key }
@@ -589,7 +610,7 @@ fσr mσrє ínfσ tчpє *.ownєr*
                             await conn.sendMessage(
                                 senderID,
                                 { text: selectedMenu.content, contextInfo: contextInfo },
-                                { quoted: receivedMsg }
+                                { quoted: verifiedContact }
                             );
                         }
 
@@ -600,7 +621,7 @@ fσr mσrє ínfσ tчpє *.ownєr*
                                 text: `📛 *Invalid Option!* ❌\n\nPlease reply with a number between 1-15 to select a menu.\n\n*Example:* Reply with "1" for Download Menu\n\n> ${config.DESCRIPTION}`,
                                 contextInfo: contextInfo
                             },
-                            { quoted: receivedMsg }
+                            { quoted: verifiedContact }
                         );
                     }
                 }

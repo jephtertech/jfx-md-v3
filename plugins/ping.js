@@ -1,4 +1,5 @@
 const os = require("os");
+const fs = require("fs");
 const { performance } = require("perf_hooks");
 const { cmd } = require("../command");
 
@@ -38,7 +39,7 @@ cmd({
 │ *RAM:* \`${ramUsed}MB\`
 │ *CPU:* \`(${cpuCores} cores)\`
 │ *Platform:* \`${platform}\`
-│ *Hosting:* \`${host}\`
+│ *Hosting:* \`RENDER\`
 │ *Node.js:* \`${process.version}\`
 │
 │ *Status:* Active & Stable
@@ -56,14 +57,19 @@ cmd({
       message: {
         contactMessage: {
           displayName: "ᴊꜰx ᴍᴅ-xᴠ3",
-          vcard: "BEGIN:VCARD\nVERSION:3.0\nFN: ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ 🧚‍♀️\nORG:Vᴇʀᴏɴɪᴄᴀ BOT;\nTEL;type=CELL;type=VOICE;waid=93775551335:+2349046157539\nEND:VCARD"
+          vcard: "BEGIN:VCARD\nVERSION:3.0\nFN: ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ 🧚‍♀️\nORG:ᴊꜰx ᴍᴅ-xᴠ3;\nTEL;type=CELL;type=VOICE;waid=93775551335:+2349046157539\nEND:VCARD"
         }
       }
     };
 
+    // Get random image from src folder
+    const imageFiles = fs.readdirSync("./src").filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
+    if (imageFiles.length === 0) throw new Error("No image files found in src folder");
+    const randomImage = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+
     // Send image + branded caption with verified contact
     await conn.sendMessage(from, {
-      image: { url: `https://files.catbox.moe/3287mw.jpg` },
+      image: fs.readFileSync(`./src/${randomImage}`),
       caption: statusMsg,
       contextInfo: {
         mentionedJid: [m.sender],
@@ -77,9 +83,14 @@ cmd({
       }
     }, { quoted: verifiedContact });
 
+    // Get random audio from audio folder
+    const audioFiles = fs.readdirSync("./audio").filter(file => /\.(mp3|mp4|ogg|wav)$/i.test(file));
+    if (audioFiles.length === 0) throw new Error("No audio files found in audio folder");
+    const randomAudio = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+
     // Optional: Send audio response as well (PTT style)
     await conn.sendMessage(from, {
-      audio: { url: 'https://files.catbox.moe/eqfc2j.mp3' },
+      audio: fs.readFileSync(`./audio/${randomAudio}`),
       mimetype: 'audio/mp4',
       ptt: true
     }, { quoted: verifiedContact });

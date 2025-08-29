@@ -27,6 +27,27 @@ const getRandomImage = () => {
     }
 };
 
+const getRandomAudio = () => {
+    try {
+        const audioPath = path.join(__dirname, '../audio');
+        const files = fs.readdirSync(audioPath);
+        const audioFiles = files.filter(file => 
+            file.endsWith('.mp3') || file.endsWith('.mp4')
+        );
+        
+        if (audioFiles.length === 0) {
+            console.log('No audio files found in audio folder');
+            return 'https://files.catbox.moe/eqfc2j.mp3'; 
+        }
+        
+        const randomAudio = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+        return path.join(audioPath, randomAudio);
+    } catch (e) {
+        console.log('Error getting random audio:', e);
+        return 'https://files.catbox.moe/eqfc2j.mp3'; 
+    }
+};
+
 cmd({
     pattern: "jfx",
     desc: "menu the bot",
@@ -39,19 +60,18 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         const totalCommands = Object.keys(commands).length;
         const time = runtime(process.uptime());
         
-        let dec = `🌟 *Good ${
+        let dec = `*Good ${
   new Date().getHours() < 12 ? 'Morning' : 
   (new Date().getHours() < 18 ? 'Afternoon' : 'Evening')
-}, ${pushname}!* 🌟
+}, ${pushname}!*
 ╭━《 *ᴊꜰx ᴍᴅ-xᴠ3* 》━┈⊷
 ┃❍⁠⁠⁠⁠╭──────────
 ┃❍⁠⁠⁠⁠│▸  Usᴇʀ : ${config.OWNER_NAME}
 ┃❍⁠⁠⁠⁠│▸  ᴛᴏᴛᴀʟ ᴄᴏᴍᴍᴀɴᴅs : *${totalCommands}*
 ┃❍⁠⁠⁠⁠│▸  ᴘʟᴀᴛғᴏʀᴍ : 𝐇𝐞𝐫𝐨𝐤𝐮
-┃❍⁠⁠⁠⁠│▸  𝖣ᴇᴠᴇʟᴏᴘᴇʀ : ᴛᴇʀʀɪ
+┃❍⁠⁠⁠⁠│▸  𝖣ᴇᴠᴇʟᴏᴘᴇʀ:${config.OWNER_NAME}
 ┃❍⁠⁠⁠⁠│▸  𝖬ᴏᴅᴇ : [${config.MODE}]
 ┃❍⁠⁠⁠⁠│▸  𝖯ʀᴇғɪx : *[${config.PREFIX}]*
-┃❍⁠⁠⁠⁠│▸  ᴛɪᴍᴇ : *${time}*
 ┃❍⁠⁠⁠⁠│▸  𝖵ᴇʀsɪᴏɴ : 𝟏.𝟎.𝟎
 ┃❍⁠⁠⁠⁠╰──────────
 ╰━━━━━━━━━━━┈⊷
@@ -92,38 +112,44 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
             message: {
                 contactMessage: {
                     displayName: "ᴊꜰx ᴍᴅ-xᴠ3",
-                    vcard: "BEGIN:VCARD\nVERSION:3.0\nFN: ᴊꜰx ᴍᴅ-xᴠ3\nORG:ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ;\nTEL;type=CELL;type=VOICE;waid=93775551335:+2349046157539\nEND:VCARD"
+                    vcard: "BEGIN:VCARD\nVERSION:3.0\nFN:ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ 🧚‍♀️\nORG:Vᴇʀᴏɴɪᴄᴀ BOT;\nTEL;type=CELL;type=VOICE;waid=2349046157539:+2349046157539\nEND:VCARD"
                 }
             }
         };
 
+        // Channel forwarding context (reusable)
+        const channelContext = {
+            mentionedJid: [m.sender],
+            forwardingScore: 999,
+            isForwarded: true,
+            forwardedNewsletterMessageInfo: {
+                newsletterJid: '120363420646690174@newsletter',
+                newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
+                serverMessageId: 143
+            }
+        };
+
+        const imagePath = getRandomImage();
+        const imageContent = imagePath.startsWith('http') ? { url: imagePath } : fs.readFileSync(imagePath);
+
         await conn.sendMessage(
             from,
             {
-                image: { url: getRandomImage() },
+                image: imageContent,
                 caption: dec,
-                contextInfo: {
-                    forwardingScore: 5,
-                    isForwarded: true,
-                    forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363420646690174@newsletter', 
-                        newsletterName: "ᴊꜰx ᴍᴅ-xᴠ3",
-                        serverMessageId: 143
-                    }
-                }
+                contextInfo: channelContext
             },
             { quoted: verifiedContact }
         );
 
-        const audioUrls = [
-            'https://files.catbox.moe/eqfc2j.mp3'
-        ];
-        const randomAudioUrl = audioUrls[Math.floor(Math.random() * audioUrls.length)];
+        const audioPath = getRandomAudio();
+        const audioContent = audioPath.startsWith('http') ? { url: audioPath } : fs.readFileSync(audioPath);
 
         await conn.sendMessage(from, {
-            audio: { url: randomAudioUrl },
+            audio: audioContent,
             mimetype: 'audio/mp4',
-            ptt: true
+            ptt: true,
+            contextInfo: channelContext
         }, { quoted: verifiedContact });
 
     } catch (e) {

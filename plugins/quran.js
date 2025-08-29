@@ -1,8 +1,10 @@
+
 const fetch = require('node-fetch'); 
 const { cmd, commands } = require('../command');
 const { fetchJson } = require('../lib/functions');
 const { translate } = require('@vitalets/google-translate-api');
-const axios = require('axios')
+const axios = require('axios');
+const fs = require('fs');
 
 cmd({
   pattern: "quran",
@@ -56,10 +58,15 @@ ${translatedTafsirUrdu.text}\n
 ⚡🔮 *Explanation (English):*\n
 ${translatedTafsirEnglish.text}`;
 
+    // Get random image from src folder
+    const imageFiles = fs.readdirSync("./src").filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
+    if (imageFiles.length === 0) throw new Error("No image files found in src folder");
+    const randomImage = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+
     await conn.sendMessage(
       from,
       {
-        image: { url: `https://i.ibb.co/rG5M4Q1S/lordcasey.jpg` },
+        image: fs.readFileSync(`./src/${randomImage}`),
         caption: quranSurah,
         contextInfo: {
           mentionedJid: [m.sender], 
@@ -446,10 +453,15 @@ async (conn, mek, m, { from, quoted, body,isCmd, command, args, q, isGroup, send
 
 114. 🌐 An-Nas (Mankind) - الناس (انسانیت)`;
 
+        // Get random image from src folder
+        const imageFiles = fs.readdirSync("./src").filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
+        if (imageFiles.length === 0) throw new Error("No image files found in src folder");
+        const randomImage = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+
         await conn.sendMessage(
             from,
             {
-                image: { url: `https://i.ibb.co/rG5M4Q1S/lordcasey.jpg` },
+                image: fs.readFileSync(`./src/${randomImage}`),
                 caption: dec,
                 contextInfo: {
                     mentionedJid: [m.sender],
@@ -465,8 +477,13 @@ async (conn, mek, m, { from, quoted, body,isCmd, command, args, q, isGroup, send
             { quoted: mek }
         );
 
+        // Get random audio from audio folder
+        const audioFiles = fs.readdirSync("./audio").filter(file => /\.(mp3|mp4|ogg|wav)$/i.test(file));
+        if (audioFiles.length === 0) throw new Error("No audio files found in audio folder");
+        const randomAudio = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+
         await conn.sendMessage(from, {
-            audio: { url: 'https://github.com/MRSHABAN40/SHABAN-MD_DATABASE/raw/refs/heads/main/Menu_Data/quran.mp3' },
+            audio: fs.readFileSync(`./audio/${randomAudio}`),
             mimetype: 'audio/mp4',
             ptt: false
         }, { quoted: mek });
@@ -476,3 +493,4 @@ async (conn, mek, m, { from, quoted, body,isCmd, command, args, q, isGroup, send
         reply(`${e}`);
     }
 });
+``

@@ -1,6 +1,15 @@
-const { cmd } = require('../command');
-const axios = require('axios');
+const fs = require("fs");
+const path = require("path");
+const { cmd } = require("../command");
+const axios = require("axios");
 
+function getRandomFile(dir, exts) {
+    const files = fs.readdirSync(dir).filter(f => exts.some(ext => f.toLowerCase().endsWith(ext)));
+    if (!files.length) return null;
+    return path.join(dir, files[Math.floor(Math.random() * files.length)]);
+}
+
+// =============== OPENAI COMMAND ===============
 cmd({
     pattern: "openai",
     alias: ["chatgpt", "gpt3", "open-gpt","gpt5"],
@@ -9,7 +18,7 @@ cmd({
     react: "🧠",
     filename: __filename
 },
-async (conn, mek, m, { from, args, q, reply, react }) => {
+async (conn, mek, m, { from, q, reply, react }) => {
     try {
         if (!q) return reply("Please provide a message for OpenAI.\nExample: `.openai Hello`");
 
@@ -21,7 +30,25 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
             return reply("OpenAI failed to respond. Please try again later.");
         }
 
-        await reply(`🧠 *OpenAI Response:*\n\n${data.result}`);
+        const status = `🧠 *OpenAI Response:*\n\n${data.result}`;
+
+        const imgPath = getRandomFile("./src", [".jpg", ".png", ".webp"]);
+        
+        await conn.sendMessage(from, { 
+            image: imgPath ? { url: imgPath } : undefined,
+            caption: status,
+            contextInfo: {
+                mentionedJid: [m.sender],
+                forwardingScore: 999,
+                isForwarded: true,
+                forwardedNewsletterMessageInfo: {
+                    newsletterJid: '120363420646690174@newsletter',
+                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
+                    serverMessageId: 111
+                }
+            }
+        }, { quoted: mek });
+
         await react("✅");
     } catch (e) {
         console.error("Error in OpenAI command:", e);
@@ -30,6 +57,7 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
     }
 });
 
+// =============== AI COMMAND ===============
 cmd({
     pattern: "ai",
     alias: ["bot", "xd", "gpt", "gpt4", "bing"],
@@ -38,7 +66,7 @@ cmd({
     react: "🤖",
     filename: __filename
 },
-async (conn, mek, m, { from, args, q, reply, react }) => {
+async (conn, mek, m, { from, q, reply, react }) => {
     try {
         if (!q) return reply("Please provide a message for the AI.\nExample: `.ai Hello`");
 
@@ -49,13 +77,16 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
             await react("❌");
             return reply("AI failed to respond. Please try again later.");
         }
-        
+
         const status = `*ᴊꜰx ᴍᴅ-xᴠ3 Response:*\n\n${data.message}`;
-        
-        // Send image + caption + audio combined with newsletter info
+
+        const imgPath = getRandomFile("./src", [".jpg", ".png", ".webp"]);
+        const audioPath = getRandomFile("./audio", [".mp3", ".mp4"]);
+
         await conn.sendMessage(from, { 
-            image: { url: `https://files.catbox.moe/3287mw.jpg` },  
+            image: imgPath ? { url: imgPath } : undefined,
             caption: status,
+            ...(audioPath ? { audio: { url: audioPath }, mimetype: "audio/mp4", ptt: true } : {}),
             contextInfo: {
                 mentionedJid: [m.sender],
                 forwardingScore: 999,
@@ -63,7 +94,7 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
                 forwardedNewsletterMessageInfo: {
                     newsletterJid: '120363420646690174@newsletter',
                     newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
-                    serverMessageId: 143
+                    serverMessageId: 222
                 }
             }
         }, { quoted: mek });
@@ -75,7 +106,8 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
         reply("An error occurred while communicating with the AI.");
     }
 });
-         
+
+// =============== DEEPSEEK COMMAND ===============
 cmd({
     pattern: "deepseek",
     alias: ["deep", "seekai"],
@@ -84,7 +116,7 @@ cmd({
     react: "👾",
     filename: __filename
 },
-async (conn, mek, m, { from, args, q, reply, react }) => {
+async (conn, mek, m, { from, q, reply, react }) => {
     try {
         if (!q) return reply("Please provide a message for DeepSeek AI.\nExample: `.deepseek Hello`");
 
@@ -96,7 +128,24 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
             return reply("DeepSeek AI failed to respond. Please try again later.");
         }
 
-        await reply(`👾 *DeepSeek AI Response:*\n\n${data.answer}`);
+        const status = `👾 *DeepSeek AI Response:*\n\n${data.answer}`;
+        const imgPath = getRandomFile("./src", [".jpg", ".png", ".webp"]);
+
+        await conn.sendMessage(from, { 
+            image: imgPath ? { url: imgPath } : undefined,
+            caption: status,
+            contextInfo: {
+                mentionedJid: [m.sender],
+                forwardingScore: 999,
+                isForwarded: true,
+                forwardedNewsletterMessageInfo: {
+                    newsletterJid: '120363420646690174@newsletter',
+                    newsletterName: 'ᴊꜰx ᴍᴅ-xᴠ3',
+                    serverMessageId: 333
+                }
+            }
+        }, { quoted: mek });
+
         await react("✅");
     } catch (e) {
         console.error("Error in DeepSeek AI command:", e);

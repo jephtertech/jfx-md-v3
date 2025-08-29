@@ -11,8 +11,7 @@ cmd({
 }, async (conn, mek, m, { from, isGroup, isBotAdmins, reply, sender, isOwner }) => {
     try {
         if (!isGroup) return reply("❌ This command works only in groups");
-        if (!isBotAdmins) return reply("❌ Bot needs admin privileges");
-        if (!isOwner) return reply("❌ Owner-only command");
+        if (!isBotAdmins) return reply("❌ I need to be an admin to promote members");
 
         // Staff list with proper JIDs
         const staffContacts = [

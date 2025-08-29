@@ -45,7 +45,7 @@ END:VCARD`;
 > 💨 *Wind:* ${data.wind.speed} m/s  
 > 📊 *Pressure:* ${data.main.pressure} hPa  
 
-> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ Tᴇʀʀɪ*
+> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴊꜰx*
 `;
 
         await conn.sendMessage(from, {

@@ -1,4 +1,3 @@
-
 //  ⚠️ DO NOT MODIFY THIS FILE ⚠️  
 //---------------------------------------------------------------------------
 const { cmd, commands } = require('../command');
@@ -11,8 +10,12 @@ const path = require('path');
 
 // Helper function to send responses with newsletter info
 async function sendResponse(conn, from, replyText, quotedMsg) {
+    const imageDir = path.join(__dirname, "../src");
+    const images = fs.readdirSync(imageDir).filter(file => file.match(/\.(jpg|png|webp)$/i));
+    const randomImage = path.join(imageDir, images[Math.floor(Math.random() * images.length)]);
+
     await conn.sendMessage(from, { 
-        image: { url: `https://files.catbox.moe/cz7xle.jpg` },  
+        image: fs.readFileSync(randomImage),  
         caption: replyText,
         contextInfo: {
             mentionedJid: [quotedMsg.sender],
@@ -34,8 +37,8 @@ cmd({
     category: "settings",
     filename: __filename
 },
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜꜱᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     const status = args[0]?.toLowerCase();
     if (status === "on") {
@@ -56,8 +59,8 @@ cmd({
     category: "settings",
     filename: __filename
 },
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "* ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "* ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜꜱᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     const status = args[0]?.toLowerCase();
     if (status === "on") {
@@ -78,11 +81,11 @@ cmd({
     desc: "Change the bot's command prefix.",
     category: "settings",
     filename: __filename,
-}, async (message, match, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await message.sendMessage("* ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜꜱᴇ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ!*");
+}, async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "* ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜꜱᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     const newPrefix = args[0];
-    if (!newPrefix) return await message.sendMessage("ᴘʟᴇᴀꜱᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ɴᴇᴡ ᴘʀᴇꜰɪx. ᴇxᴀᴍᴘʟᴇ: `.ꜱᴇᴛᴘʀᴇꜰɪx !");
+    if (!newPrefix) return await sendResponse(conn, from, "ᴘʟᴇᴀꜱᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ɴᴇᴡ ᴘʀᴇꜰɪx. ᴇxᴀᴍᴘʟᴇ: `.ꜱᴇᴛᴘʀᴇꜰɪx !", m);
 
     // Update config in memory
     config.PREFIX = newPrefix;
@@ -96,10 +99,10 @@ cmd({
             `PREFIX: "${newPrefix}"$1`
         );
         fs.writeFileSync(configPath, configFile);
-        return await message.sendMessage(`✅ Prefix successfully changed to *${newPrefix}*`);
+        return await sendResponse(conn, from, `✅ Prefix successfully changed to *${newPrefix}*`, m);
     } catch (error) {
         console.error('Error updating prefix:', error);
-        return await message.sendMessage("❌ Failed to update prefix in config file.");
+        return await sendResponse(conn, from, "❌ Failed to update prefix in config file.", m);
     }
 });
 
@@ -110,8 +113,8 @@ cmd({
     desc: "Set bot mode to private or public.",
     category: "settings",
     filename: __filename,
-}, async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "* ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜꜱᴇ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ!*", m);
+}, async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "* ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜꜱᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     if (!args[0]) {
         return await sendResponse(conn, from, `📌 Current mode: *${config.MODE}*\n\nUsage: .mode private OR .mode public`, m);
@@ -135,8 +138,8 @@ cmd({
     category: "settings",
     filename: __filename
 },    
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "* ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "* ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     const status = args[0]?.toLowerCase();
     if (!["on", "off"].includes(status)) {
@@ -154,8 +157,8 @@ cmd({
     category: "settings",
     filename: __filename
 },    
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     if (args[0] === "on") {
         config.MENTION_REPLY = "true";
@@ -175,8 +178,8 @@ cmd({
     category: "settings",
     filename: __filename
 },
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     const status = args[0]?.toLowerCase();
     if (status === "on") {
@@ -197,8 +200,8 @@ cmd({
     category: "settings",
     filename: __filename
 },    
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     const status = args[0]?.toLowerCase();
     if (!["on", "off"].includes(status)) {
@@ -222,8 +225,8 @@ cmd({
     category: "settings",
     filename: __filename
 },    
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     if (args[0] === "on") {
         config.AUTO_STATUS_SEEN = "true";
@@ -243,8 +246,8 @@ cmd({
     category: "settings",
     filename: __filename
 },    
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     if (args[0] === "on") {
         config.AUTO_STATUS_REACT = "true";
@@ -264,8 +267,8 @@ cmd({
     category: "settings",
     filename: __filename
 },    
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     if (args[0] === "on") {
         config.READ_MESSAGE = "true";
@@ -285,8 +288,8 @@ cmd({
     category: "settings",
     filename: __filename
 },    
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     if (args[0] === "on") {
         config.AUTO_VOICE = "true";
@@ -306,8 +309,8 @@ cmd({
     category: "settings",
     filename: __filename
 },    
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     if (args[0] === "on") {
         config.ANTI_BAD_WORD = "true";
@@ -327,8 +330,8 @@ cmd({
     category: "settings",
     filename: __filename
 },    
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     if (args[0] === "on") {
         config.AUTO_STICKER = "true";
@@ -348,8 +351,8 @@ cmd({
     category: "settings",
     filename: __filename
 },    
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     if (args[0] === "on") {
         config.AUTO_REPLY = "true";
@@ -369,8 +372,8 @@ cmd({
     category: "settings",
     filename: __filename
 },    
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     if (args[0] === "on") {
         config.AUTO_REACT = "true";
@@ -390,8 +393,8 @@ cmd({
     category: "settings",
     filename: __filename
 },    
-async (conn, mek, m, { from, args, isCreator, reply }) => {
-    if (!isCreator) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
+async (conn, mek, m, { from, args, reply }) => {
+    if (m.sender.split('@')[0] !== config.OWNER_NUMBER.split('@')[0]) return await sendResponse(conn, from, "*ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*", m);
 
     if (args[0] === "on") {
         config.AUTO_STATUS_REPLY = "true";
@@ -442,7 +445,7 @@ cmd({
   try {
     if (!isGroup) return await sendResponse(conn, from, 'ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ᴏɴʟʏ ʙᴇ ᴜꜱᴇᴅ ɪɴ ᴀ ɢʀᴏᴜᴘ.', m);
     if (!isBotAdmins) return await sendResponse(conn, from, 'ʙᴏᴛ ᴍᴜꜱᴛ ʙᴇ ᴀɴ ᴀᴅᴍɪɴ ᴛᴏ ᴜꜱᴇ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ.', m);
-    if (!isAdmins) return await sendResponse(conn, from, 'ʏᴏᴜ ᴍᴜꜱᴛ ʙᴇ ᴀɴ ᴀᴅᴍɪɴ ᴛᴏ ᴜꜱᴇ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ.', m);
+    if (!isAdmins) return await sendResponse(conn, from, 'ʏᴏᴜ ᴍᴜꜱᴛ ʙᴇ ᴀɴ ᴀᴅᴍɪɴ ᴛᴏ ᴜꜱᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ.', m);
 
     if (args[0] === "on") {
       config.ANTI_LINK_KICK = "true";
