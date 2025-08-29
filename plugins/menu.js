@@ -37,10 +37,10 @@ cmd({
 async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
     try {
         const totalCommands = Object.keys(commands).length;
-        let dec = `🌟 *Good ${
+        let dec = ` *Good ${
   new Date().getHours() < 12 ? 'Morning' : 
   (new Date().getHours() < 18 ? 'Afternoon' : 'Evening')
-}, ${pushname}!* 🌟
+}, ${pushname}!*
 ╭━〔 ⚡ *ᴊꜰx ᴍᴅ-xᴠ3* ⚡ 〕━⊷
 ┃ ✦ 𝖴sᴇʀ : ${config.OWNER_NAME}
 ┃ ✦ ᴄᴏᴍᴍᴀɴᴅs : *${totalCommands}*
@@ -75,8 +75,8 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ┃ ✪ ʟᴏɢᴏᴍᴇɴᴜ
 ┃ ✪ ᴀᴅᴜʟᴛᴍᴇɴᴜ
 ╰━━━━━━━━━━━━━━⊷
-> ${config.DESCRIPTION}`;
-        
+> ${config.OWNER_NAME}`;
+
         // Contact message for verified context
         const verifiedContact = {
             key: {
@@ -165,7 +165,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ┃✦╰─────────────────╯
 ╰━━━━━━━━━━━━━━━━━━━┈⊷
 
-> ${config.DESCRIPTION}`;
+> ${config.OWNER_NAME}`;
 
         await conn.sendMessage(
             from,

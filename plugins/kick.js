@@ -14,16 +14,20 @@ async (Void, msg, {
     // Check if the command is used in a group
     if (!isGroup) return await reply("❌ This command can only be used in groups.");
 
-    // Check if the bot is an admin
-    if (!isBotAdmin) return await reply("❌ I need to be an admin to use this command.");
-
     // Get group metadata
     const metadata = await Void.groupMetadata(from).catch(() => null);
     if (!metadata) return await reply("❌ Failed to fetch group info.");
 
     // Check if sender is admin
     const participant = metadata.participants.find(p => p.id === sender);
-    if (!participant?.admin) return await reply("❌ Only group admins can use this command.");
+    if (!participant || !participant.admin) {
+        return await reply("❌ Only group admins can use this command.");
+    }
+
+    // Check if bot is admin
+    if (!isBotAdmin) {
+        return await reply("❌ I need to be an admin to remove members.");
+    }
 
     let userJid;
     if (msg.message?.extendedTextMessage?.contextInfo?.mentionedJid?.length > 0) {
@@ -32,9 +36,9 @@ async (Void, msg, {
     } else if (quoted?.sender) {
         // If replying to a message
         userJid = quoted.sender;
-    } else if (args && args.match(/^\d+$/)) {
+    } else if (args.length > 0 && /^\d+$/.test(args[0])) {
         // If phone number is provided
-        userJid = args + '@s.whatsapp.net';
+        userJid = args[0] + '@s.whatsapp.net';
     } else {
         return await reply("❌ Please reply to a message, mention a user, or provide a phone number.");
     }
@@ -53,13 +57,13 @@ async (Void, msg, {
         
         // Send success message with mention
         await Void.sendMessage(from, {
-            image: { url: `https://files.catbox.moe/ue0vkz.jpg` },
-            caption: `★ᴍᴏᴛʜᴇʀꜰᴜᴄᴋᴇʀ ᴋɪᴄᴋᴇᴅ @${userNumber}\n\n- Action by admin`,
+            image: { url: `https://files.catbox.moe/tejxaj.jpg` },
+            caption: `★ ᴍᴏᴛʜᴇʀꜰᴜᴄᴋᴇʀ ᴋɪᴄᴋᴇᴅ @${userNumber}\n\n- Action by admin`,
             mentions: [userJid]
         }, { quoted: msg });
         
     } catch (error) {
         console.error("Remove command error:", error);
-        await reply(`❌ Failed to remove the member. Error: ${error.message}`);
+        await reply(`❌ Failed to remove the member.\n\nError: ${error?.message || error}`);
     }
 });

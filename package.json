@@ -4,7 +4,7 @@
   "description": "A WhatsApp Bot Created By Terri",
   "main": "index.js",
   "scripts": {
-    "start": "npx pm2 start index.js --deep-monitoring --attach --name VERONICA-AI",
+    "start": "npx pm2 start index.js --deep-monitoring --attach --name JFX-V3",
     "stop": "npx pm2 stop VERONICA-AI",
     "restart": "npx pm2 restart VERONICA-AI"
   },

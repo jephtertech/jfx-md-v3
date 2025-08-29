@@ -13,6 +13,7 @@ cmd({
     filename: __filename,
 }, async (_m, sock, msg, { from }) => {
     const githubRepoURL = "https://github.com/Jeffreyfx1/jfx-md-x-v3";
+    const pairsiteURL = "https://jfx-v3-session.onrender.com";
 
     try {
         // Extract username and repo name from the URL
@@ -32,11 +33,15 @@ cmd({
 
         // Format info
         const formattedInfo = `
-*𝐇𝐄𝐋𝐋𝐎 𝐓𝐇𝐄𝐑𝐄* 
+*𝐇𝐄𝐋𝐋𝐎 DEAR!* 
 ──────────────────
 📂 *Repository Link:*  
 > ${githubRepoURL}
-${readMore}
+
+*★ᴘᴀɪʀ ꜱɪᴛᴇ*
+> ${pairsiteURL}
+
+    ${readMore}
 \`BOT NAME:\`
 > ${repoData.name}
 

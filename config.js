@@ -46,7 +46,7 @@ OWNER_NUMBER: process.env.OWNER_NUMBER || "2349046157539",
 // add your bot owner number
 OWNER_NAME: process.env.OWNER_NAME || "ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ",
 // add bot owner name
-DESCRIPTION: process.env.DESCRIPTION || "> © POWERED ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ",
+DESCRIPTION: process.env.DESCRIPTION || "© ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ",
 // add bot owner name    
 ALIVE_IMG: process.env.ALIVE_IMG || "https://files.catbox.moe/6jfywh.jpg",
 // add img for alive msg
@@ -54,7 +54,7 @@ LIVE_MSG: process.env.LIVE_MSG || "> Powered by ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜ"
 // add alive msg here 
 READ_MESSAGE: process.env.READ_MESSAGE || "false",
 // Turn true or false for automatic read msgs
-AUTO_REACT: process.env.AUTO_REACT || "false",
+AUTO_REACT: process.env.AUTO_REACT || "true",
 // make this true or false for auto react on all msgs
 ANTI_BAD: process.env.ANTI_BAD || "false",
 // false or true for anti bad words  
@@ -62,7 +62,7 @@ MODE: process.env.MODE || "public",
 // make bot public-private-inbox
 AUTO_STICKER: process.env.AUTO_STICKER || "false",
 // make true for automatic stickers 
-AUTO_REPLY: process.env.AUTO_REPLY || "true",
+AUTO_REPLY: process.env.AUTO_REPLY || "false",
 // make true or false automatic text reply 
 ALWAYS_ONLINE: process.env.ALWAYS_ONLINE || "true",
 // make true for always online 
