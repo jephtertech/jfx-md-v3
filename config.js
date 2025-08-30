@@ -36,7 +36,7 @@ module.exports = {
     ANTI_LINK: process.env.ANTI_LINK || "false",
     MENTION_REPLY: process.env.MENTION_REPLY || "true",
     MENU_IMAGE_URL: process.env.MENU_IMAGE_URL || getRandomImage(),
-    PREFIX: process.env.PREFIX || "*",
+    PREFIX: process.env.PREFIX || "/",
     BOT_NAME: process.env.BOT_NAME || "ᴊꜰx ᴍᴅ-xᴠ3",
     STICKER_NAME: process.env.STICKER_NAME || "ᴊꜰx ᴍᴅ-xᴠ3",
     CUSTOM_REACT: process.env.CUSTOM_REACT || "false",
